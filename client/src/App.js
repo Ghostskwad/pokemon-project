@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
+import axios from "axios"
 
 function App() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    fetch("/hello")
-      .then((r) => r.json())
-      .then((data) => setCount(data.count));
+    axios.get("/hello").then(resp => setCount(resp.data.count));
   }, []);
 
   return (
