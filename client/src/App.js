@@ -1,28 +1,60 @@
 import { useState, useEffect } from "react"
-import { BrowserRouter, Switch, Route } from "react-router-dom"
-import axios from "axios"
+import { Route, Switch } from 'react-router-dom';
+import { usePokemon } from "./PokemonContext";
+import NavBar from './NavBar';
+import Library from './Library';
+import Pokedex from './Pokedex';
+import PokemonPage from './PokemonPage';
+import HomePage from './HomePage';
+import LoginForm from './LoginForm';
+import Signup from "./SignUp";
+
+
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
-    axios.get("/hello").then(resp => setCount(resp.data.count));
+    // auto-login
+    fetch("/me").then((r) => {
+      if (r.ok) {
+        r.json().then((user) => {
+          setUser(user)
+        });
+      }
+    });
   }, []);
 
+  
+
+  
+
   return (
-    <BrowserRouter>
-      <div className="App">
-        <Switch>
-          <Route path="/testing">
-            <h1>Test Route</h1>
+    <div>
+      <NavBar user={user} setUser={setUser}/>
+      <Switch>
+        <Route exact path ="/login">
+        <LoginForm setUser={setUser}/>
+        </Route>
+        <Route exact path ="/signup">
+        <Signup user={user} setUser={setUser}/>
+        </Route>
+        <Route exact path ="/">
+          <HomePage />
+        </Route>
+        <Route exact path="/library">
+          <Library user={user}/>
+        </Route>
+        <Route exact path="/pokedex">
+          <Pokedex />
+        </Route>
+          <Route exact path="/:name">
+            <PokemonPage />
           </Route>
-          <Route path="/">
-            <h1>Page Count: {count}</h1>
-          </Route>
-        </Switch>
-      </div>
-    </BrowserRouter>
-  );
+      </Switch>
+    </div>
+  )
 }
 
 export default App;
+
